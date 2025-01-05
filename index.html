@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .meter-container {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 30px;
+            border: 2px solid #000;
+            border-radius: 20px;
+        }
+
+        .interface-container {
+            border: 2px solid #000;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            position: relative;
+        }
+
+        .model-info h1 {
+            font-size: 15px;
+            margin: 0;
+            line-height: 1.2;
+            text-align: center; /* Centered header */
+            margin-bottom: 10px; /* Space below the header */
+        }
+
+        .model-info {
+            font-size: 13px;
+            text-align: left;
+            margin: 15px 0;
+            position: absolute;
+            text-align: center; /* Centered header */
+            top: 120px; /* Adjusted to move it up */
+            line-height: 1.6;
+            border: 2px solid #000; /* Added border */
+            border-top-left-radius: 20px 20px; /* border-top-left Rounded corners */
+            border-bottom-right-radius: 20px 20px;  /* border-bottom-right Rounded corners */
+            padding: 10px; /* Reduced padding for smaller size */
+            background: #f9f9f9; /* Optional: Light background color */
+            width: 180px; /* Reduced width to make it smaller */
+        }
+
+        .plc-container {
+            display: inline-block;
+            background: black; /* Black background */
+            color: white; /* White text */
+            padding: 5px 10px; /* Padding for spacing */
+            border-radius: 5px; /* Rounded corners */
+            margin-top: 10px; /* Space above the container */
+        }
+
+        .circle-container {
+            position: absolute;
+            top: -75px; /* Position above the .model-info container */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Center horizontally */
+            width: 40px;
+            height: 40px;
+            background: #f9f9f9; /* Match the background color */
+            border: 2px solid #000; /* Black border */
+            border-radius: 50%; /* Make it a circle */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .battery-indicator {
+            width: 5px;
+            height: 12px;
+            background: #FFF; /* White battery indicator */
+            border: 2px solid #000;
+            margin-bottom: 0; /* Remove space between battery and arrow */
+        }
+
+        .arrow-down {
+            font-size: 24px; /* Increase size for boldness */
+            color: #000; /* Black arrow */
+            font-weight: bold; /* Make the arrow bolder */
+            text-shadow: 0 0 2px #000; /* Optional: Adds a shadow for extra thickness */
+            margin-top: 0; /* Remove space above the arrow */
+        }
+
+        .display {
+            border: 2px solid #000;
+            padding: 10px; /* Padding for spacing */
+            margin: 20px 0;
+            text-align: right;
+            font-size: 32px;
+            font-weight: bold;
+            margin-left: auto;
+            height: 50px;
+            width: 200px;
+            border-top-left-radius: 20px 20px; /* border-top-left Rounded corners */
+            border-bottom-right-radius: 20px 20px;  /* border-bottom-right Rounded corners */
+            display: flex;
+            align-items: flex-end; /* Align content to the bottom */
+            justify-content: flex-end; /* Align content to the right */
+            overflow: hidden; /* Prevent text overflow */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .unit {
+            font-size: 0.5em;
+            align-self: flex-end; /* Align units to the bottom */
+            margin-left: 2px; /* Small spacing between number and unit */
+        }
+
+        .content-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .right-section {
+            width: 220px;
+            margin-left: 240px; /* Added margin to create space for .model-info */
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .key {
+            border: 2px solid #000;
+            padding: 10px;
+            text-align: center;
+            font-size: 20px;
+            background: white;
+            cursor: pointer;
+            user-select: none;
+            border-top-left-radius: 10px 10px; /* border-top-left Rounded corners */
+            border-bottom-right-radius: 10px 10px;  /* border-bottom-right Rounded corners */
+        }
+
+        .key:active {
+            background: #e0e0e0;
+        }
+
+        .brand {
+            grid-column: span 3; /* Span across all 3 columns */
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .input-mode {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 5px;
+            color: #666;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 80%;
+        }
+
+        .modal-close {
+            float: right;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="meter-container">
+        <div class="interface-container">
+            <div class="model-info">
+                <!-- Circle with battery indicator and arrow -->
+                <div class="circle-container">
+                    <div class="battery-indicator"></div>
+                    <div class="arrow-down">▼</div>
+                </div>
+                <h1>CUSTOMER<br>INTERFACE<br>UNIT</h1>
+                Model: PLC CIU M0<br>
+                Type: 20-005800<br>
+                Rating:<br>
+                220-240V 50Hz 0.00д<br>
+                CIU No: 010368045<br>
+                1000 imp/kWh<br>
+                Thee preperts Authority sold<br>
+                <div class="plc-container">PLC 2</div> <!-- Added black container -->
+            </div>
+
+            <div class="content-wrapper">
+                <div class="right-section">
+                    <div class="display" id="display">
+                        <span>20.0</span><span class="unit">kWh</span>
+                    </div>
+                    <div class="input-mode" id="inputMode"></div>
+                    <div class="error" id="errorMsg"></div>
+
+                    <div class="keypad" id="keypad">
+                        <div class="key" data-key="1">1</div>
+                        <div class="key" data-key="2">2</div>
+                        <div class="key" data-key="3">3</div>
+                        <div class="key" data-key="4">4</div>
+                        <div class="key" data-key="5">5</div>
+                        <div class="key" data-key="6">6</div>
+                        <div class="key" data-key="7">7</div>
+                        <div class="key" data-key="8">8</div>
+                        <div class="key" data-key="9">9</div>
+                        <div class="key" data-key="back">←</div>
+                        <div class="key" data-key="0">0</div>
+                        <div class="key" data-key="info">i</div>
+                    </div>
+
+                    <div class="brand"><i>CASHPOWER</i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModal">&times;</span>
+            <h2>Meter Information</h2>
+            <p>Meter Number: <span id="modalMeterNumber">010368045</span></p>
+            <p>Current Balance: <span id="modalBalance">20.0</span> kWh</p>
+            <p>Daily Usage: <span id="modalUsage">0.5</span> kWh</p>
+            <p>Last Token: <span id="modalLastToken">7800322512487889</span></p>
+            <p>Status: <span id="modalStatus">Active</span></p>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const inputMode = document.getElementById('inputMode');
+        const errorMsg = document.getElementById('errorMsg');
+        const keypad = document.getElementById('keypad');
+        const infoModal = document.getElementById('infoModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalMeterNumber = document.getElementById('modalMeterNumber');
+        const modalBalance = document.getElementById('modalBalance');
+        const modalUsage = document.getElementById('modalUsage');
+        const modalLastToken = document.getElementById('modalLastToken');
+        const modalStatus = document.getElementById('modalStatus');
+
+        let currentInput = '';
+        const maxDigits = 16; // Maximum allowed digits for token
+
+        keypad.addEventListener('click', (e) => {
+            const key = e.target.getAttribute('data-key');
+            if (key) {
+                handleKeyPress(key);
+            }
+        });
+
+        closeModal.addEventListener('click', () => {
+            infoModal.style.display = 'none';
+        });
+
+        function handleKeyPress(key) {
+            if (key === 'back') {
+                currentInput = currentInput.slice(0, -1); // Remove last character
+            } else if (key === 'info') {
+                showInfoModal();
+                return;
+            } else if (currentInput.length < maxDigits) { // Only allow input if less than 16 digits
+                currentInput += key;
+            }
+
+            // If 16 digits are entered, calculate and display the kWh value
+            if (currentInput.length === maxDigits) {
+                const kWhValue = calculateKWh(currentInput);
+                display.innerHTML = `${kWhValue}<span class="unit">kWh</span>`;
+            } else {
+                updateDisplay();
+            }
+        }
+
+        function calculateKWh(token) {
+            // Normalize the token to a smaller value (e.g., divide by a large number)
+            const tokenValue = parseFloat(token);
+            const kWhValue = (tokenValue / 1000000000000).toFixed(2); // Normalize to less than 5 digits
+            return kWhValue;
+        }
+
+        function updateDisplay() {
+            display.innerHTML = `${currentInput}<span class="unit">kWh</span>`;
+        }
+
+        function showInfoModal() {
+            // Update modal content with dynamic values
+            modalMeterNumber.textContent = '010368045'; // Household meter number
+            modalBalance.textContent = display.textContent.split('kWh')[0].trim(); // Current balance from display
+            modalUsage.textContent = '0.5'; // Placeholder for daily usage (can be dynamic)
+            modalLastToken.textContent = currentInput || '7800322512487889'; // Last token entered
+            modalStatus.textContent = 'Active'; // Status
+            infoModal.style.display = 'block';
+        }
+    </script>
+</body>
+                  </html>
